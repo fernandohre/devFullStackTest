@@ -27,13 +27,6 @@ namespace sistema_recados.Services.Interfaces
         void Delete(string id);
 
         /// <summary>
-        /// Consulta o primeiro objeto genérico que atende uma condição.
-        /// </summary>
-        /// <param name="id">Id para pesquisar o objeto.</param>
-        /// <returns></returns>
-        TData Search(string id);
-
-        /// <summary>
         /// Consulta todos os objetos que obedecem uma condição.
         /// </summary>
         /// <returns>Retorna uma coleção de objetos genéricos.</returns>

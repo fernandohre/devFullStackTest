@@ -51,7 +51,7 @@ class MessageForm extends Component {
 
     render() {
         return (
-            <div style={{display: this.props.activeItem === 'Cadastrar Recado' ? 'block' : 'none'}}>
+            <div className="message-form">
                 <div>
                     <Header floated='left'>
                         <span >Cadastrar Recado</span>

@@ -5,12 +5,15 @@ import MessageList from './MessageList'
 import api from '../services/api';
 import LoaderPage from './LoaderPage';
 
+const registerMessage = 'Cadastrar Recado';
+const seeMessage = 'Ver Recados';
+
 class MainPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
             isLoading: true,
-            activeItem: 'Cadastrar Recado',
+            activeItem: registerMessage,
             messages: []
         }
     }
@@ -18,7 +21,6 @@ class MainPage extends Component {
     componentDidMount() {
         api.get('/Messages')
             .then(result => {
-                console.log(result.data.data);
                 this.setState({
                     isLoading: false,
                     messages: [...result.data.data]
@@ -41,29 +43,28 @@ class MainPage extends Component {
             <div>
                 <Menu pointing>
                     <MenuItem
-                        name='Ver Recados'
-                        active={this.state.activeItem === 'Ver Recados'}
+                        name={seeMessage}
+                        active={this.state.activeItem === seeMessage}
                         onClick={this.handleItemClick}
                     />
                     <MenuItem
-                        name='Cadastrar Recado'
-                        active={this.state.activeItem === 'Cadastrar Recado'}
+                        name={registerMessage}
+                        active={this.state.activeItem === registerMessage}
                         onClick={this.handleItemClick}
                     />
                 </Menu>
 
                 {this.state.isLoading ? <LoaderPage /> :
                     <Segment>
-                        {this.state.activeItem === 'Cadastrar Recado' ? <MessageForm
-                            activeItem={this.state.activeItem}
+                        {this.state.activeItem === registerMessage ? 
+                        <MessageForm
                             addNewMessage={this.addNewMessage}
                             messagesCount={this.state.messages.length}
                         />
-                            :
-                            <MessageList
-                                activeItem={this.state.activeItem}
-                                messages={this.state.messages}
-                            />}
+                        :
+                        <MessageList
+                            messages={this.state.messages}
+                        />}
                     </Segment>}
             </div>
         )

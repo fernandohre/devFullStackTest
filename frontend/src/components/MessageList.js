@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
-import { Divider, Header, List, Icon } from 'semantic-ui-react';
-
+import { Divider, Header} from 'semantic-ui-react';
+import MessageGroup from './MessageGroup'
 class MessageList extends Component {
     constructor(props) {
         super(props);
-        console.log(props);
     }
 
     render() {
         return (
-            <div style={{ display: this.props.activeItem === 'Ver Recados' ? 'block' : 'none' }}>
+            <div>
 
                 <Header floated='left'>
                     <span >Recados</span>
@@ -18,17 +17,11 @@ class MessageList extends Component {
                     <Divider></Divider>
                 </div>
 
-                <List animated verticalAlign='middle'>
-                    {this.props.messages.map((message) => (
-                        <List.Item key={message.id}>
-                            <Icon name='mail'/>
-                            <List.Content>
-                                <List.Header>{message.subject}</List.Header>
-                            </List.Content>
-                        </List.Item>
-                    ))}
-                </List>
-                <h2>Você tem {this.props.messages.length} mensagens</h2>
+                <MessageGroup 
+                    messages={this.props.messages}
+                />
+
+                <h2 style={{textAlign: 'center'}}>Você tem {this.props.messages.length} mensagens no total</h2>
             </div>
         );
     }

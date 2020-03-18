@@ -8,5 +8,6 @@ namespace sistema_recados.Services.Interfaces
 {
     public interface IMessageService : IDefaultService<Message>
     {
+        
     }
 }

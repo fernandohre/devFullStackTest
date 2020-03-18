@@ -41,7 +41,10 @@ namespace sistema_recados.Repositories.Implementations
                 Collection().ReplaceOne(condition, data);
             });
         }
-
+        /// <summary>
+        /// Cadastra um documento no banco
+        /// </summary>
+        /// <param name="data"></param>
         public void Register(T data)
         {
             ExecuteTransaction(() =>
@@ -49,21 +52,25 @@ namespace sistema_recados.Repositories.Implementations
                 Collection().InsertOne(data);
             });
         }
-
-        public T SearchOne(Expression<Func<T, bool>> condition)
-        {
-            return Collection().Find(condition).FirstOrDefault();
-        }
-
-        public List<T> Search(Expression<Func<T, bool>> condition)
-        {
-            return Collection().Find(condition).ToList();
-        }
-
         public List<T> GetList(Expression<Func<T, bool>> condition)
         {
-
             return Collection().Find(condition).ToList();
+        }
+
+        public List<T> GetList(FilterDefinition<T> filter) 
+        {
+            return Collection().Find(filter).ToList();
+        }
+
+        public List<T> GetList(Expression<Func<T, bool>>[] filter) 
+        {
+            var builder = Builders<T>.Filter;
+
+            var listaFiltro = filter.ToList().Select(x => builder.Where(x));
+
+            var filtro = builder.And(listaFiltro);
+
+            return Collection().Find(filtro).ToList();
         }
 
         public void Delete(Expression<Func<T, bool>> condition)

@@ -1,13 +1,11 @@
-﻿using sistema_recados.CustomAttributes;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace sistema_recados.Domain
 {
-    [Collection("messages")]
-    public class Message
+    public class MessageRelated
     {
         public int id { get; set; }
         public string Sender { get; set; }
@@ -15,6 +13,5 @@ namespace sistema_recados.Domain
         public string Subject { get; set; }
         public string Text { get; set; }
         public DateTime Date { get; set; }
-        public List<MessageRelated> RelatedMessages { get; set; }
     }
 }

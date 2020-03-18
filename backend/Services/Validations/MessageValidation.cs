@@ -9,6 +9,7 @@ namespace sistema_recados.Services.Validations
 {
     public class MessageValidation : Validation<Message>
     {
+        public const int HALFYEAF = 6;
         public override void SignRulesForDeletation()
         {
             SignRulesFieldsRequired();
