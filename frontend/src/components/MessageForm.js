@@ -1,32 +1,53 @@
-import React, { Component } from 'react';
-import { Form, Divider, Header } from 'semantic-ui-react';
+import React, { Component, } from 'react';
+import { Form, Divider, Header, Modal, Button,Icon } from 'semantic-ui-react';
 import '../css/MessageForm.css';
-
+import api from '../services/api';
 class MessageForm extends Component {
     constructor(props) {
         super(props);
-        
         this.state = {
-            sender: '',
-            receiver: '',
-            subject: '',
-            textDescription: ''
+            showModal: false,
+            currentMessage: {
+                sender: '',
+                receiver: '',
+                subject: '',
+                textDescription: ''
+            }
         }
-        this.handleInputChange = this.handleInputChange.bind(this);
+        
     }
+    
+    handleOpen = () => this.setState({ showModal: true })
 
-    clearFormMessage = () => {
-        this.setState({
-            sender: '',
-            receiver: '',
-            subject: '',
-            textDescription: ''
-        })
-    }
+    handleClose = () => this.setState({ showModal: false })
 
-    handleEventSubmit = (event) => {
-        const { sender, receiver, subject, textDescription} = this.state;
+    handleEventSubmit = (e) => {
+        e.preventDefault();
+        const sender = e.currentTarget.elements['sender'].value;
+        const receiver = e.currentTarget.elements['receiver'].value;
+        const subject = e.currentTarget.elements['subject'].value;
+        const textDescription = e.currentTarget.elements['textDescription'].value;
+        
         if (this.state != null) {
+            const options = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            }
+            api.post('/Messages', {
+                sender: sender,
+                receiver: receiver,
+                subject: subject,
+                text: textDescription
+            }, options).then(result => {
+                console.log(result);
+            })
+            .catch(error => {
+                console.log(error);
+                this.handleOpen();
+            });
+
             this.props.addNewMessage({
                 id: this.props.messagesCount + 1,
                 sender: sender,
@@ -34,75 +55,73 @@ class MessageForm extends Component {
                 subject: subject,
                 textDescription: textDescription
             });
-            this.clearFormMessage();
         }
-        
+
     }
-
-    handleInputChange(event) {
-        const target = event.target;
-        const value = target.value;
-        const name = target.name;
-
-        this.setState({
-            [name]: value
-        });
-    }
-
+ 
     render() {
+        
         return (
             <div className="message-form">
                 <div>
                     <Header floated='left'>
                         <span >Cadastrar Recado</span>
                     </Header>
-                        
+
                     <Header floated='right'>
-                        <Form.Button onClick={this.handleEventSubmit}>Enviar</Form.Button>
                     </Header>
                 </div>
                 <div className="divisorDiv">
                     <Divider></Divider>
                 </div>
                 <div className="messageForm">
-                    <Form>
+                    <Form onSubmit={this.handleEventSubmit}>
                         <Form.Group widths='equal'>
-                            <Form.Input 
+                            <Form.Input
                                 name='sender'
-                                fluid label='De' 
-                                placeholder='Remetente' 
+                                fluid label='De'
+                                placeholder='Remetente'
                                 required
-                                value={this.state.sender}
-                                onChange={this.handleInputChange}
                             />
-                            <Form.Input 
+                            <Form.Input
                                 name='receiver'
-                                fluid label='Para' 
-                                placeholder='Destinatário' 
+                                fluid label='Para'
+                                placeholder='Destinatário'
                                 required
-                                value={this.state.receiver}
-                                onChange={this.handleInputChange}
                             />
-                            <Form.Input 
+                            <Form.Input
                                 name='subject'
-                                fluid label='Assunto' 
+                                fluid label='Assunto'
                                 placeholder='Assunto'
-                                value={this.state.subject}
-                                onChange={this.handleInputChange}
                             />
                         </Form.Group>
-                        <Form.TextArea 
+                        <Form.TextArea
                             name='textDescription'
-                            label='Recado' 
-                            placeholder='Escreva aqui o seu recado...' 
+                            label='Recado'
+                            placeholder='Escreva aqui o seu recado...'
                             required
-                            onChange={this.handleInputChange}
-                            value={this.state.textDescription}
                         />
+                        <Modal
+                            trigger={<Form.Button  type="submit">Enviar</Form.Button>}
+                            open={this.state.showModal}
+                            onClose={this.handleClose}
+                            basic
+                            size='tiny'
+                            style={{position: 'relative'}}
+                        >
+                            <Header icon='browser' content='Mensagem' />
+                            <Modal.Content>
+                            <h3>Recado cadastrado com sucesso!</h3>
+                            </Modal.Content>
+                            <Modal.Actions>
+                            <Button color='green' onClick={this.handleClose} inverted>
+                                <Icon name='checkmark' /> Continuar
+                            </Button>
+                            </Modal.Actions>
+                        </Modal>
                     </Form>
                 </div>
             </div>
-            
         );
     }
 }

@@ -3,85 +3,97 @@ import {
     Container,
     Row,
     Col,
-    DropdownButton,
-    Dropdown,
-    ButtonGroup,
-    ListGroup
 } from 'react-bootstrap';
-import { v4 as uuidv4 } from 'uuid';
-import { Divider } from 'semantic-ui-react';
 
+import { v4 as uuidv4 } from 'uuid';
+
+import { Accordion, Icon } from 'semantic-ui-react';
+import MessageFormVisualization from './MessageFormVisualization';
+import SubMessages from './SubMessages';
+const styleList = {
+    height: '500px',
+    width: '80%',
+    overflow: 'hidden', 
+    overflowY: 'scroll'
+}
 class MessageGroup extends Component {
     constructor(props) {
         super(props);
-        console.log('MessageGroup: ', props);
+        this.state = {
+            relatedMessages: [],
+            activeIndex: -1
+        }
+        
     }
 
-
+    getUniqueKey = (item) => {
+        return item.id + item.date.toString() + uuidv4();
+    }
 
     render() {
 
         const hasMessagesToShow = this.props.messages.length > 0;
-
         const messageItems = hasMessagesToShow ? this.props.messages.map((message, index) => {
             return (<div key={message.id}>
-                <ListGroup.Item eventKey={message.id + "_"} as="li">
-                    <i className="envelope icon" style={{ fontSize: '2em' }} />
-                    {
-                        message.relatedMessages.length > 0 ?
-                        <DropdownButton
-                            id={uuidv4()}
-                            style={{ paddingBottom: '12px' }}
-                            as={ButtonGroup}
-                            drop="right"
-                            variant="No Style"
-                            title={message.subject}
-                        >
-                            {message.relatedMessages.map((subMessage) => {
-                                return (
-                                    <Dropdown.Item eventKey={subMessage.id + "_dropdownItem"}>
-                                        {subMessage.subject}
-                                    </Dropdown.Item>
-                                );
-                            })}
-                        </DropdownButton> :
+                <Accordion.Title
+                    active={this.state.activeIndex === index}
+                    index={index}
+                    onClick={(e, titleProps) => {
+                        const { index } = titleProps;
+                        const { activeIndex } = this.state;
+                        const newIndex = activeIndex === index ? -1 : index;
 
-                        message.subject
-                    }
-                    
-                </ListGroup.Item>
+                        if (!message.relatedMessages) return;
+                        
+                        this.setState({
+                            activeIndex: newIndex,
+                            relatedMessages: message.relatedMessages
+                        })
+                    }}
+                >
+                    <Icon name='mail' />
+                    {message.subject}
+                    {message.relatedMessages && message.relatedMessages.length > 0 
+                    ?   
+                        <Icon name='plus' style={{marginLeft: '5px', marginRight: '5px'}}>
+                            {message.relatedMessages.length}
+                        </Icon>
+                    : ''}
+                </Accordion.Title>
+                <Accordion.Content active={this.state.activeIndex === index}>
+                    <SubMessages
+                        subMessages={message.relatedMessages}
+                    />
+                </Accordion.Content>
             </div>)
         }) : 'Nenhum recado';
-
         return (
             <Container fluid>
                 <Row>
                     <Col xs lg={4}>
-                        <ListGroup variant="flush" key={uuidv4()}>
+                        <Accordion>
                             {messageItems}
-                            {/* <ListGroup.Item>
-                                <i class="envelope icon" style={styleIcon}></i>
-
-                                <DropdownButton
-                                    style={{ paddingBottom: '12px' }}
-                                    as={ButtonGroup}
-                                    drop="right"
-                                    variant="No Style"
-                                    title='Cras justo odio'
-                                >
-                                    <Dropdown.Item eventKey="1">Action</Dropdown.Item>
-                                    <Dropdown.Divider />
-                                    <Dropdown.Item eventKey="2">Another action</Dropdown.Item>
-                                    <Dropdown.Divider />
-                                    <Dropdown.Item eventKey="3">Something else here</Dropdown.Item>
-                                    <Dropdown.Divider />
-                                </DropdownButton>
-                            </ListGroup.Item> */}
-
-                        </ListGroup>
+                        </Accordion>
                     </Col>
-                    <Col>
-                        Formulário
+                    <Col style={styleList}>
+                        {
+                            this.state.relatedMessages.length > 0 ?
+                                this.state.relatedMessages.map((item) => {
+                                    console.log(item);
+                                    return (
+                                        <div key={this.getUniqueKey(item)}>
+                                            <MessageFormVisualization
+                                                dateOfMessage={item.date}
+                                                sender={item.sender}
+                                                receiver={item.receiver}
+                                                messageText={item.text}
+                                                subject={item.subject}
+                                            />
+                                        </div>
+                                    )
+                                })
+                                : ''
+                        }
                     </Col>
                 </Row>
             </Container>

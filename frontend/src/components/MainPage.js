@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Menu, MenuItem, Segment } from 'semantic-ui-react';
 import MessageForm from './MessageForm';
-import MessageList from './MessageList'
+import MessagePageList from './MessagePageList'
 import api from '../services/api';
 import LoaderPage from './LoaderPage';
 
@@ -62,7 +62,7 @@ class MainPage extends Component {
                             messagesCount={this.state.messages.length}
                         />
                         :
-                        <MessageList
+                        <MessagePageList
                             messages={this.state.messages}
                         />}
                     </Segment>}
