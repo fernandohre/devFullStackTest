@@ -15,4 +15,5 @@ Repositório destinado a avaliação para vaga de Desenvolvedor Full Stack Pleno
 > cd frontend/
 - Execute os seguintes comandos:
 > npm install
+- Depois:
 > npm start
